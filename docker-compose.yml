@@ -1,0 +1,27 @@
+# Dev infrastructure. App code runs on your machine (in WSL2); only the
+# stateful services run in containers. `docker compose up -d` then work.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres        # superuser, admin only. The APP never connects as this.
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./infra/initdb:/docker-entrypoint-initdb.d:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

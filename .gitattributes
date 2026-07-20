@@ -1,0 +1,3 @@
+# Force LF everywhere. Windows Git defaults to CRLF, which corrupts shell
+# scripts and SQL init files the moment they run inside Linux containers.
+* text=auto eol=lf
